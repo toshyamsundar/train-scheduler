@@ -25,7 +25,8 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-database.js"></script>
 
     <script src="./assets/js/train.js"></script>
     <title>Train Scheduler</title>
@@ -87,8 +88,8 @@
                   <input type="text" class="form-control" id="train-destination" />
                 </div>
                 <div class="form-group">
-                  <label for="first-train">First Train Time (HH:mm)</label>
-                  <input type="time" class="form-control" id="first-train" />
+                  <label for="train-first">First Train Time (HH:mm)</label>
+                  <input type="time" class="form-control" id="train-first" />
                 </div>
                 <div class="form-group">
                   <label for="train-frequency">Frequency (min)</label>
