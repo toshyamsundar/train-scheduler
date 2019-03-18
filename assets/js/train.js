@@ -36,42 +36,55 @@ $(document).ready(function() {
     trainDetails.trainDestination = $("#train-destination")
       .val()
       .trim();
-    trainDetails.trainFirstTime = currDate + " " + $("#train-first").val();
+    trainDetails.trainFirstTime = $("#train-first").val();
     console.log("trainFirstName: " + trainDetails.trainFirstTime);
-    trainDetails.trainFrequency = $("#train-frequency").val();
+    trainDetails.trainFrequency = parseInt($("#train-frequency").val());
     console.log(trainDetails);
     addTrainDetails(trainDetails);
   });
 
-  database.ref("/train-scheduler/train-details").on("child_added", function(trainSnapshot) {
+  var displayTrainSchedule = trainSnapshot => {
     var ts = trainSnapshot.val();
 
     var trElem = $("<tr>");
     var tdTrainName = $("<td>");
     var tdTrainDestination = $("<td>");
-    var tdTrainFirstTime = $("<td>");
     var tdTrainFrequency = $("<td>");
     var tdNextArrival = $("<td>");
     var tdMinutesAway = $("<td>");
-    var currentTime = moment();
-    console.log("Current: " + currentTime);
-    console.log("Train First Time: " + ts.TrainFirstTime);
-    var diffTime = moment.duration(moment(currentTime).diff(ts.TrainFirstTime)).asMinutes();
-    console.log("Diff Time: " + diffTime);
-    var remainderTime = diffTime % ts.TrainFrequency;
-    console.log("Remainder: " + remainderTime);
-    var minutesAway = ts.TrainFrequency - remainderTime;
-    console.log("minutesAway: " + minutesAway);
-    var nextArrival = moment().add(minutesAway);
-    console.log("next: " + moment(nextArrival).format("hh:mm"));
+    var tdUpdateButton = $("<td>");
+    var tdDeleteButton = $("<td>");
+    var updateButton = $("<button>");
+    var deleteButton = $("<button>");
+
+    // console.log("Train First Time: " + moment(ts.TrainFirstTime, "HH:mm"));
+    // console.log("Moment: " + moment());
+
+    var diffTime = moment().diff(moment(ts.TrainFirstTime, "HH:mm"), "minutes");
+    // console.log("Diff Time: " + diffTime);
+    var timeRemaining = diffTime % ts.TrainFrequency;
+    // console.log("Remainder: " + timeRemaining);
+    var minutesAway = ts.TrainFrequency - timeRemaining;
+    // console.log("minutesAway: " + minutesAway);
+    var nextArrival = moment().add(minutesAway, "minutes");
+    // console.log("next: " + moment(nextArrival).format("YYYY-MM-DD HH:mm"));
 
     tdTrainName.text(ts.TrainName);
     tdTrainDestination.text(ts.TrainDestination);
     tdTrainFrequency.text(ts.TrainFrequency);
-    tdNextArrival.text(nextArrival);
+    tdNextArrival.text(moment(nextArrival).format("YYYY-MM-DD HH:mm"));
     tdMinutesAway.text(minutesAway);
 
     $(trElem).append(tdTrainName, tdTrainDestination, tdTrainFrequency, tdNextArrival, tdMinutesAway);
     $("#train-details").append(trElem);
+
+    // var timeInterval = setInterval(function() {
+    //   $("#train-details").empty();
+    //   displayTrainSchedule(trainSnapshot);
+    // }, 60000);
+  };
+
+  database.ref("/train-scheduler/train-details").on("child_added", function(trainSnapshot) {
+    displayTrainSchedule(trainSnapshot);
   });
 });
