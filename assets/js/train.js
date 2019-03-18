@@ -11,6 +11,7 @@ $(document).ready(function() {
   firebase.initializeApp(config);
 
   var database = firebase.database();
+  var databaseRef = database.ref("/train-scheduler/train-details");
 
   var trainDetails = {
     trainName: "",
@@ -75,7 +76,28 @@ $(document).ready(function() {
     tdNextArrival.text(moment(nextArrival).format("YYYY-MM-DD HH:mm"));
     tdMinutesAway.text(minutesAway);
 
-    $(trElem).append(tdTrainName, tdTrainDestination, tdTrainFrequency, tdNextArrival, tdMinutesAway);
+    $(updateButton).text("Edit");
+    $(updateButton).attr("data-key", trainSnapshot.key);
+    $(updateButton).addClass("btn btn-success py-1 btn-edit");
+    $(deleteButton).text("Remove");
+    $(deleteButton).attr("data-key", trainSnapshot.key);
+    $(deleteButton).addClass("btn btn-danger py-1 btn-remove");
+
+    $(tdUpdateButton).append(updateButton);
+    $(tdDeleteButton).append(deleteButton);
+
+    $(trElem).attr("data-key", trainSnapshot.key);
+
+    $(trElem).append(
+      tdTrainName,
+      tdTrainDestination,
+      tdTrainFrequency,
+      tdNextArrival,
+      tdMinutesAway,
+      tdUpdateButton,
+      tdDeleteButton
+    );
+
     $("#train-details").append(trElem);
 
     // var timeInterval = setInterval(function() {
@@ -84,7 +106,20 @@ $(document).ready(function() {
     // }, 60000);
   };
 
-  database.ref("/train-scheduler/train-details").on("child_added", function(trainSnapshot) {
+  $(document).on("click", ".btn-remove", function() {
+    var snapshotKey = $(this).attr("data-key");
+    console.log("Key: " + snapshotKey);
+    databaseRef
+      .child(snapshotKey)
+      .remove()
+      .then(function() {
+        $('#train-details tr[data-key="' + snapshotKey + '"]').remove();
+      });
+  });
+
+  databaseRef.on("child_added", function(trainSnapshot) {
+    console.log(trainSnapshot.val());
+    console.log(trainSnapshot.key);
     displayTrainSchedule(trainSnapshot);
   });
 });
