@@ -27,7 +27,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-database.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-auth.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script> -->
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
     <script src="./assets/js/train.js"></script>
     <title>Train Scheduler</title>
   </head>
@@ -44,67 +47,74 @@
         <div class="col-1"></div>
       </div>
 
-      <div class="row">
-        <div class="column col-1"></div>
-        <div class="column col-10">
-          <div class="card">
-            <div class="card-header bg-dark text-light">
-              Current Schedule
-            </div>
-            <div class="card-body">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">Train Name</th>
-                    <th scope="col">Destination</th>
-                    <th scope="col">Frequency (min)</th>
-                    <th scope="col">Next Arrival</th>
-                    <th scope="col">Minutes Away</th>
-                    <th scope="col">Edit</th>
-                    <th scope="col">Remove</th>
-                  </tr>
-                </thead>
-                <tbody id="train-details"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="column col-1"></div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="column col-1"></div>
-        <div class="column col-10">
-          <div class="card">
-            <div class="card-header bg-dark text-light">
-              Add Train
-            </div>
-            <div class="card-body">
-              <form>
-                <div class="form-group">
-                  <label for="train-name">Train Name</label>
-                  <input type="text" class="form-control" id="train-name" />
-                </div>
-                <div class="form-group">
-                  <label for="train-destination">Destination </label>
-                  <input type="text" class="form-control" id="train-destination" />
-                </div>
-                <div class="form-group">
-                  <label for="train-first">First Train Time (HH:mm)</label>
-                  <input type="time" class="form-control" id="train-first" />
-                </div>
-                <div class="form-group">
-                  <label for="train-frequency">Frequency (min)</label>
-                  <input type="number" min="1" class="form-control" id="train-frequency" />
-                </div>
-                <button type="button" class="btn btn-dark mt-2 float-left" id="btn-add">
-                  Add Train
-                </button>
-              </form>
+      <div id="firebaseui-auth-container"></div>
+      <div id="signedin-section" style="display: none">
+        <div class="row">
+          <div class="column col-1"></div>
+          <div class="column col-10">
+            <div class="card">
+              <div class="card-header bg-dark text-light">
+                Current Schedule
+              </div>
+              <div class="card-body">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">Train Name</th>
+                      <th scope="col">Destination</th>
+                      <th scope="col">Frequency (min)</th>
+                      <th scope="col">Next Arrival</th>
+                      <th scope="col">Minutes Away</th>
+                      <th scope="col">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody id="train-details"></tbody>
+                </table>
+              </div>
             </div>
           </div>
           <div class="column col-1"></div>
         </div>
+
+        <div class="row mt-4">
+          <div class="column col-1"></div>
+          <div class="column col-10">
+            <div class="card">
+              <div class="card-header bg-dark text-light">
+                Add Train
+              </div>
+              <div class="card-body">
+                <form>
+                  <div class="form-group">
+                    <label for="train-name">Train Name</label>
+                    <input type="text" class="form-control" id="train-name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="train-destination">Destination </label>
+                    <input type="text" class="form-control" id="train-destination" />
+                  </div>
+                  <div class="form-group">
+                    <label for="train-first">First Train Time (HH:mm)</label>
+                    <input type="time" class="form-control" id="train-first" />
+                  </div>
+                  <div class="form-group">
+                    <label for="train-frequency">Frequency (min)</label>
+                    <input type="number" min="1" class="form-control" id="train-frequency" />
+                  </div>
+                  <button type="button" class="btn btn-dark mt-2 float-left" id="btn-add">
+                    Save
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div class="column col-1"></div>
+          </div>
+        </div>
+        <footer class="footer mt-auto py-3">
+          <div class="container text-center">
+            <span class="text-muted"></span>
+          </div>
+        </footer>
       </div>
     </div>
   </body>

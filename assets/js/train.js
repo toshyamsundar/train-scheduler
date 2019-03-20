@@ -10,8 +10,25 @@ $(document).ready(function() {
 
   firebase.initializeApp(config);
 
+  var uiConfig = {
+    callbacks: {
+      signInSuccessWithAuthResult: function(authResult, redirectURL) {
+        $("#signedin-section").show();
+        $("#firebaseui-auth-container").hide();
+        return false;
+      }
+    },
+    signInFlow: "popup",
+    signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
+  };
+
+  var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  ui.start("#firebaseui-auth-container", uiConfig);
+
   var database = firebase.database();
   var databaseRef = database.ref("/train-scheduler/train-details");
+  // var trainDetailsCollection = [];
+  // var counter = 0;
 
   var trainDetails = {
     trainName: "",
@@ -30,7 +47,6 @@ $(document).ready(function() {
   };
 
   $("#btn-add").on("click", function(event) {
-    var currDate = moment().format("YYYY-MM-DD");
     trainDetails.trainName = $("#train-name")
       .val()
       .trim();
@@ -53,9 +69,9 @@ $(document).ready(function() {
     var tdTrainFrequency = $("<td>");
     var tdNextArrival = $("<td>");
     var tdMinutesAway = $("<td>");
-    var tdUpdateButton = $("<td>");
+    // var tdUpdateButton = $("<td>");
     var tdDeleteButton = $("<td>");
-    var updateButton = $("<button>");
+    // var updateButton = $("<button>");
     var deleteButton = $("<button>");
 
     // console.log("Train First Time: " + moment(ts.TrainFirstTime, "HH:mm"));
@@ -76,46 +92,62 @@ $(document).ready(function() {
     tdNextArrival.text(moment(nextArrival).format("YYYY-MM-DD HH:mm"));
     tdMinutesAway.text(minutesAway);
 
-    $(updateButton).text("Edit");
-    $(updateButton).attr("data-key", trainSnapshot.key);
-    $(updateButton).addClass("btn btn-success py-1 btn-edit");
+    // $(updateButton).text("Edit");
+    // $(updateButton).attr("data-key", trainSnapshot.key);
+    // $(updateButton).addClass("btn btn-success py-1 btn-edit");
     $(deleteButton).text("Remove");
     $(deleteButton).attr("data-key", trainSnapshot.key);
     $(deleteButton).addClass("btn btn-danger py-1 btn-remove");
 
-    $(tdUpdateButton).append(updateButton);
+    // $(tdUpdateButton).append(updateButton);
     $(tdDeleteButton).append(deleteButton);
 
     $(trElem).attr("data-key", trainSnapshot.key);
+    // $(trElem).attr("data-index", counter);
 
-    $(trElem).append(
-      tdTrainName,
-      tdTrainDestination,
-      tdTrainFrequency,
-      tdNextArrival,
-      tdMinutesAway,
-      tdUpdateButton,
-      tdDeleteButton
-    );
+    $(trElem).append(tdTrainName, tdTrainDestination, tdTrainFrequency, tdNextArrival, tdMinutesAway, tdDeleteButton);
 
     $("#train-details").append(trElem);
 
-    // var timeInterval = setInterval(function() {
-    //   $("#train-details").empty();
-    //   displayTrainSchedule(trainSnapshot);
-    // }, 60000);
+    // trainDetails.trainName = ts.TrainName;
+    // trainDetails.trainDestination = ts.TrainDestination;
+    // trainDetails.trainFirstTime = ts.TrainFirstTime;
+    // trainDetails.trainFrequency = ts.TrainFrequency;
+
+    // trainDetailsCollection.push(trainDetails);
+    // counter++;
   };
 
   $(document).on("click", ".btn-remove", function() {
-    var snapshotKey = $(this).attr("data-key");
-    console.log("Key: " + snapshotKey);
+    snapshotKey = $(this).attr("data-key");
+    // var dataIndex = $(this)
+    //   .parents("tr")
+    //   .attr("data-index");
+
+    // console.log("Key: " + snapshotKey);
+
     databaseRef
       .child(snapshotKey)
       .remove()
       .then(function() {
         $('#train-details tr[data-key="' + snapshotKey + '"]').remove();
       });
+
+    // trainDetailsCollection.splice(dataIndex, 1);
   });
+
+  // $(document).on("click", ".btn-edit", function(event) {
+  //   var snapshotKey = $(this).attr("data-key");
+  //   console.log("Key: " + snapshotKey);
+  //   event.preventDefault();
+  //   var snapshot = databaseRef.child(snapshotKey);
+  //   console.log("Inside update");
+  //   console.log(snapshot.TrainName + " " + snapshot.TrainDestination);
+  //   $("#train-name").val(updateSnapshot.TrainName);
+  //   $("#train-destination").val(updateSnapshot.TrainDestination);
+  //   $("#train-first").val(updateSnapshot.TrainFirstTime);
+  //   $("#train-frequency").val(updateSnapshot.TrainFrequency);
+  // });
 
   databaseRef.on("child_added", function(trainSnapshot) {
     console.log(trainSnapshot.val());
