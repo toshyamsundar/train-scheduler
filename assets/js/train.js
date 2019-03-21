@@ -13,6 +13,10 @@ $(document).ready(function() {
   var uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: function(authResult, redirectURL) {
+        // console.log(authResult);
+        $("#welcome-message").text("Welcome, " + authResult.user.displayName);
+        $("#welcome-message").show();
+        $("#signout").show();
         $("#signedin-section").show();
         $("#firebaseui-auth-container").hide();
         return false;
@@ -46,6 +50,22 @@ $(document).ready(function() {
     });
   };
 
+  $("#signout").on("click", function() {
+    firebase
+      .auth()
+      .signOut()
+      .then(function() {
+        console.log("Signed Out!");
+      });
+
+    $("#welcome-message").text("");
+    $("#welcome-message").hide();
+    $("#signout").hide();
+    $("#signedin-section").hide();
+    $("#firebaseui-auth-container").show();
+    ui.start("#firebaseui-auth-container", uiConfig);
+  });
+
   $("#btn-add").on("click", function(event) {
     trainDetails.trainName = $("#train-name")
       .val()
@@ -54,9 +74,9 @@ $(document).ready(function() {
       .val()
       .trim();
     trainDetails.trainFirstTime = $("#train-first").val();
-    console.log("trainFirstName: " + trainDetails.trainFirstTime);
+    // console.log("trainFirstName: " + trainDetails.trainFirstTime);
     trainDetails.trainFrequency = parseInt($("#train-frequency").val());
-    console.log(trainDetails);
+    // console.log(trainDetails);
     addTrainDetails(trainDetails);
   });
 
@@ -150,8 +170,8 @@ $(document).ready(function() {
   // });
 
   databaseRef.on("child_added", function(trainSnapshot) {
-    console.log(trainSnapshot.val());
-    console.log(trainSnapshot.key);
+    // console.log(trainSnapshot.val());
+    // console.log(trainSnapshot.key);
     displayTrainSchedule(trainSnapshot);
   });
 });
