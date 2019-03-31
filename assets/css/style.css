@@ -7,3 +7,11 @@ span > a:hover {
   text-decoration: none;
   color: #f8f9fa !important;
 }
+
+.container-fluid {
+  padding: 0;
+  background: url("../images/locomotive-railroad-railway.jpg");
+  background-position: bottom center;
+  background-size: cover;
+  min-height: 100vh;
+}

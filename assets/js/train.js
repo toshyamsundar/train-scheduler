@@ -13,12 +13,12 @@ $(document).ready(function() {
   var uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: function(authResult, redirectURL) {
-        // console.log(authResult);
         $("#welcome-message").text("Welcome, " + authResult.user.displayName);
         $("#welcome-message").show();
         $("#signout").show();
         $("#signedin-section").show();
         $("#firebaseui-auth-container").hide();
+        $("#heading").show();
         return false;
       }
     },
@@ -170,8 +170,25 @@ $(document).ready(function() {
   // });
 
   databaseRef.on("child_added", function(trainSnapshot) {
-    // console.log(trainSnapshot.val());
-    // console.log(trainSnapshot.key);
     displayTrainSchedule(trainSnapshot);
+  });
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      var currentUser = firebase.auth().currentUser;
+      $("#firebaseui-auth-container").hide();
+      $("#signedin-section").show();
+      $("#welcome-message").text("Welcome, " + currentUser.displayName);
+      $("#welcome-message").show();
+      $("#signout").show();
+      $("#heading").show();
+    } else {
+      $("#firebaseui-auth-container").show();
+      $("#signedin-section").hide();
+      $("#welcome-message").text("");
+      $("#welcome-message").hide();
+      $("#signout").hide();
+      $("#heading").hide();
+    }
   });
 });
