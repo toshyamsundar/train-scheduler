@@ -10,8 +10,8 @@ span > a:hover {
 
 .container-fluid {
   padding: 0;
-  background: url("../images/locomotive-railroad-railway.jpg");
-  background-position: bottom center;
+  background: url("../images/black-and-white-carriage-clouds.jpg");
+  background-position: center center;
   background-size: cover;
   min-height: 100vh;
 }
